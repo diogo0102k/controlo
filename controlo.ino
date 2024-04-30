@@ -49,7 +49,7 @@ const char* password = "";
 
 unsigned long lastCardReadTime = 0; // Variável para pegar o tempo da leitura do cartão RFID (pra impedir crash, o rfid parava de ler depois de um tempo )
 #define CARD_READ_INTERVAL 7000 // tempo para reiniciar a leitura do cartão RFID
-
+const int rele = 4;
 
 void recvMsg(uint8_t *data, size_t len){
   WebSerial.println("Dados Recebidos...");
@@ -113,6 +113,7 @@ void setup() {
   WebSerial.begin(&server);
   WebSerial.msgCallback(recvMsg);
   server.begin();
+  pinMode(rele, OUTPUT);
 }
 
 void loop() {
@@ -174,6 +175,10 @@ void loop() {
           // Verifica se o UID da tag está presente no payload
           if (payload.indexOf(tagUID) != -1) {
             Serial.println("Correspondido");
+            
+            digitalWrite(rele, HIGH);
+            delay(6000);
+            digitalWrite(rele, LOW);
           } else {
             Serial.println("Não correspondido");
           }
